@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UNO Arena</title>
+<style>
+:root{--bg:#081018;--panel:#101a25;--panel2:#0c151f;--line:#294156;--text:#edf5ff;--muted:#9db0c4;--accent:#62d8ff;--red:#f43d59;--yellow:#ffd447;--green:#35d383;--blue:#4caeff;--pink:#ff70b9;--teal:#55ddd8;--orange:#ff9954;--purple:#b876ff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 15% 0,#153149 0,transparent 35%),radial-gradient(circle at 90% 0,#283149 0,transparent 28%),var(--bg);color:var(--text)}
+button,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.wrap{max-width:1500px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.brand{font-weight:1000;letter-spacing:.12em;font-size:24px}.sub{font-size:12px;color:var(--muted)}
+.panel{background:rgba(16,26,37,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 35px rgba(0,0,0,.28)}
+.lobby{display:grid;grid-template-columns:1.35fr .8fr;gap:20px;padding:24px}.hero h1{font-size:clamp(38px,5vw,64px);line-height:.95;margin:0 0 12px}.hero p{max-width:700px;line-height:1.6;color:var(--muted)}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}.mode{padding:16px;border-radius:14px;border:1px solid #2a4155;background:#0c151f;color:var(--text);text-align:left}.mode.active,.mode:hover{border-color:var(--accent);background:#12202e}.mode b{display:block;margin-bottom:7px;font-size:16px}.mode span{font-size:12px;line-height:1.45;color:var(--muted)}
+.setup{padding:20px;background:#0b141d;border:1px solid #24394c;border-radius:16px}.setup h2{margin-top:0}.setup label{display:block;color:var(--muted);font-size:12px;margin:18px 0 7px}.setup select{width:100%;padding:11px 12px;color:var(--text);background:#09131d;border:1px solid #31485d;border-radius:10px}.primary{width:100%;margin-top:18px;padding:13px 14px;border:0;border-radius:12px;color:#fff;font-weight:900;background:linear-gradient(135deg,#37b9e8,#6b80ff)}
+.rules{margin-top:14px;padding:13px;border:1px solid #24394c;border-radius:12px;color:#b7c5d4;line-height:1.55;font-size:12px;background:#09131d}
+.game{display:block}.hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:12px 16px;margin-bottom:14px}.hud .center{text-align:center}.pill{display:inline-block;padding:7px 12px;border-radius:999px;background:#102737;border:1px solid #2b536d;color:var(--accent);font-size:11px;font-weight:900}.score{font-size:12px;color:var(--muted);margin-top:4px}
+.arena{display:grid;grid-template-columns:220px 1fr 240px;gap:14px;min-height:680px}.side{padding:16px}.bothead{display:flex;justify-content:space-between;align-items:center}.avatar{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#2a3d55,#132133);font-weight:900}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px}.back{height:54px;border-radius:8px;border:1px solid #3b546a;background:repeating-linear-gradient(45deg,#101d2b 0,#101d2b 5px,#162a3d 5px,#162a3d 10px)}
+.board{display:flex;flex-direction:column;gap:14px}.log{height:118px;overflow:auto;padding:12px;background:#09131d;border:1px solid #23394d;border-radius:14px;font-size:12px;color:#cbd7e4}.log div+div{margin-top:5px}
+.table{position:relative;display:grid;place-items:center;min-height:420px;padding:24px;background:radial-gradient(circle,#17283a 0,#0b151f 60%);border:1px solid #233d52;border-radius:18px}.piles{display:flex;align-items:center;gap:34px}.draw{width:94px;height:138px;border-radius:14px;border:2px solid #32556d;background:linear-gradient(135deg,#162f41,#07131b);color:#fff;font-weight:1000}.draw small{display:block;color:var(--muted);font-size:10px;font-weight:600;margin-top:4px}.card{width:94px;height:138px;border-radius:14px;border:2px solid rgba(255,255,255,.85);position:relative;box-shadow:0 10px 22px rgba(0,0,0,.28);overflow:hidden;user-select:none}.hand .card{flex:0 0 auto;cursor:pointer;transition:.12s}.hand .card:hover{transform:translateY(-8px)}.disabled{opacity:.42;filter:grayscale(.8);cursor:not-allowed!important;transform:none!important}
+.red{background:linear-gradient(145deg,#fb4d64,#b81730)}.yellow{background:linear-gradient(145deg,#ffe05b,#e3a10e);color:#1b1b1b}.green{background:linear-gradient(145deg,#49dc91,#0f9150)}.blue{background:linear-gradient(145deg,#4cbaff,#1962d4)}.pink{background:linear-gradient(145deg,#ff78bd,#b42779)}.teal{background:linear-gradient(145deg,#5ee6df,#148f99)}.orange{background:linear-gradient(145deg,#ffa15f,#d66119)}.purple{background:linear-gradient(145deg,#bd7cff,#6639a7)}.wild{background:conic-gradient(from 45deg,var(--red) 0 25%,var(--yellow) 25% 50%,var(--green) 50% 75%,var(--blue) 75% 100%)}
+.corner{position:absolute;top:7px;left:8px;font-size:12px;font-weight:1000}.symbol{position:absolute;inset:0;display:grid;place-items:center;font-weight:1000;font-size:32px;text-align:center;padding:8px}.tiny{position:absolute;right:7px;bottom:5px;font-weight:900;font-size:11px}
+.handpanel{padding:16px}.handtitle{display:flex;justify-content:space-between;align-items:center;gap:10px}.hand{display:flex;gap:10px;overflow:auto;padding:10px 2px 12px;margin-top:8px}.controls{display:flex;gap:8px;flex-wrap:wrap}.control{padding:8px 11px;border:1px solid #31485a;border-radius:9px;background:#0d1823;color:#dce7f4}.control:disabled{opacity:.35;cursor:not-allowed}
+.state div{margin:7px 0}.state b{color:#f6fbff}.hint{margin-top:5px}
+.picker{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none;grid-template-columns:repeat(4,50px);gap:9px;padding:13px;background:#09131d;border:1px solid #3c566b;border-radius:15px;z-index:5}.picker button{height:50px;border:0;border-radius:11px}.picker button[data-c="red"]{background:var(--red)}.picker button[data-c="yellow"]{background:var(--yellow)}.picker button[data-c="green"]{background:var(--green)}.picker button[data-c="blue"]{background:var(--blue)}.picker button[data-c="pink"]{background:var(--pink)}.picker button[data-c="teal"]{background:var(--teal)}.picker button[data-c="orange"]{background:var(--orange)}.picker button[data-c="purple"]{background:var(--purple)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.66);display:grid;place-items:center;z-index:20}.modalbox{width:min(520px,92vw);padding:24px}.modalbox h2{margin:0 0 8px}.modalbox p{color:#b9c7d5;line-height:1.55}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#111d2a;border:1px solid #385168;border-radius:999px;padding:11px 16px;font-size:12px;z-index:30;display:none}
+@media(max-width:1050px){.lobby{grid-template-columns:1fr}.arena{grid-template-columns:1fr}.side{display:none}.table{min-height:400px}}@media(max-width:680px){.modes{grid-template-columns:1fr}.piles{gap:16px}.card,.draw{width:76px;height:112px}.picker{grid-template-columns:repeat(4,42px)}.picker button{height:42px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div><div class="brand">UNO ARENA</div><div class="sub">Standalone browser game · no libraries · no assets</div></div><div id="topMode" class="sub">Choose a mode</div></div>
+
+  <section id="lobby" class="panel lobby">
+    <div class="hero">
+      <h1>Deal.<br>Match.<br>Ruin friendships.</h1>
+      <p>Three game modes, a bot opponent, responsive UI, and a single self-contained HTML file.</p>
+      <div class="modes">
+        <button class="mode active" data-mode="classic" type="button"><b>Classic</b><span>Numbers, Skip, Reverse, Draw Two, Wild and Wild Draw Four.</span></button>
+        <button class="mode" data-mode="flip" type="button"><b>Flip</b><span>Light/dark sides, Flip, Draw One/Five, Skip Everyone and Wild Draw Color.</span></button>
+        <button class="mode" data-mode="mercy" type="button"><b>No Mercy</b><span>Draw stacking, draw-until-playable, 7 swap, 0 pass, special wild penalties.</span></button>
+      </div>
+    </div>
+    <div class="setup">
+      <h2>Match setup</h2>
+      <label for="difficulty">Bot personality</label>
+      <select id="difficulty"><option value="balanced">Balanced</option><option value="aggressive">Aggressive</option><option value="chaotic">Chaotic</option></select>
+      <label for="cards">Starting cards</label>
+      <select id="cards"><option value="7">7 cards</option><option value="5">5 cards</option><option value="9">9 cards</option></select>
+      <button id="start" class="primary" type="button">START MATCH</button>
+      <div id="rules" class="rules"></div>
+    </div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="hud panel">
+      <div><strong>YOU</strong><div id="youCount" class="score">Cards: 0</div></div>
+      <div class="center"><div id="turn" class="pill">YOUR TURN</div><div id="turnInfo" class="score"></div></div>
+      <div style="text-align:right"><strong id="botName">BOT</strong><div id="botCount" class="score">Cards: 0</div></div>
+    </div>
+    <div class="arena">
+      <aside class="side panel">
+        <div class="bothead"><div style="display:flex;align-items:center;gap:9px"><div class="avatar">AI</div><div><b>Opponent</b><div id="botMood" class="sub">Balanced</div></div></div></div>
+        <div id="botCards" class="mini"></div>
+        <div id="botNote" class="rules">The bot weighs playable cards, hand size and color frequency.</div>
+      </aside>
+
+      <main class="board">
+        <div id="log" class="log"></div>
+        <div class="table panel">
+          <div class="piles"><button id="draw" class="draw" type="button">DRAW<small id="deck">0 left</small></button><div id="topCard"></div></div>
+          <div id="picker" class="picker">
+            <button type="button" data-c="red"></button><button type="button" data-c="yellow"></button><button type="button" data-c="green"></button><button type="button" data-c="blue"></button>
+          </div>
+        </div>
+        <div class="handpanel panel">
+          <div class="handtitle"><b>Your Hand</b><div class="controls"><button id="uno" class="control" type="button">CALL UNO</button><button id="new" class="control" type="button">NEW MATCH</button></div></div>
+          <div id="hand" class="hand"></div><div id="hint" class="sub hint"></div>
+        </div>
+      </main>
+
+      <aside class="side panel">
+        <h3 style="margin-top:0">Match state</h3>
+        <div id="state" class="rules state"></div>
+        <button id="help" class="control" type="button" style="margin-top:10px">RULES</button>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<div id="modal" class="modal hidden"><div class="modalbox panel"><h2 id="modalTitle"></h2><p id="modalBody"></p><button id="modalButton" class="primary" type="button">NEW MATCH</button></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+'use strict';
+var RULES={
+ classic:{name:'Classic',colors:['red','yellow','green','blue'],drawStack:false,text:'Match color or symbol. Draw Two, Skip, Reverse, Wild and Wild Draw Four apply.'},
+ flip:{name:'Flip',colors:['red','yellow','green','blue'],drawStack:false,text:'Light and dark sides. Flip changes the visible side for every card. Dark side has Draw Five, Skip Everyone and Wild Draw Color.'},
+ mercy:{name:'No Mercy',colors:['red','yellow','green','blue'],drawStack:true,text:'Stack draw penalties. Draw until playable. 7 swaps hands, 0 passes hands, and 25 cards eliminates a player.'}
+};
+var S=null, uid=1;
+
+function el(id){return document.getElementById(id)}
+function log(msg){if(!S)return;S.logs.unshift(msg);S.logs=S.logs.slice(0,28);el('log').innerHTML=S.logs.map(function(x){return '<div>• '+safe(x)+'</div>'}).join('')}
+function safe(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function card(type,color,value,side,alt){return{id:uid++,type:type,color:color||null,value:value==null?null:value,side:side||'light',alt:alt||null}}
+function eff(c){
+ if(S.mode!=='flip'||c.side==='light')return{type:c.type,color:c.color,value:c.value};
+ return c.alt||{type:c.type,color:c.color,value:c.value}
+}
+function isWild(t){return ['wild','wild4','wildColor','wild2','wild6','wild10','wildRev4','discardAll'].indexOf(t)>=0}
+function drawValue(t){return ({draw1:1,draw2:2,draw5:5,wild2:2,wild4:4,wild6:6,wild10:10,wildRev4:4})[t]||0}
+function buildDeck(){
+ var d=[],m=RULES[S.mode],i,n,c;
+ if(S.mode==='flip'){
+   var L=['red','yellow','green','blue'],D=['pink','teal','orange','purple'];
+   L.forEach(function(c,ci){
+     d.push(card('number',c,0,'light',{type:'number',color:D[ci],value:0}));
+     for(n=1;n<=9;n++)for(i=0;i<2;i++)d.push(card('number',c,n,'light',{type:'number',color:D[ci],value:n}));
+     for(i=0;i<2;i++){
+       d.push(card('draw1',c,null,'light',{type:'draw5',color:D[ci]}));
+       d.push(card('reverse',c,null,'light',{type:'reverse',color:D[ci]}));
+       d.push(card('skip',c,null,'light',{type:'skipAll',color:D[ci]}));
+       d.push(card('flip',c,null,'light',{type:'flip',color:null}));
+     }
+   });
+   for(i=0;i<4;i++)d.push(card('wild',null,null,'light',{type:'wild',color:null}));
+   for(i=0;i<4;i++)d.push(card('wild2',null,null,'light',{type:'wildColor',color:null}));
+ }else{
+   m.colors.forEach(function(c){
+     d.push(card('number',c,0));
+     for(n=1;n<=9;n++){d.push(card('number',c,n));d.push(card('number',c,n))}
+     for(i=0;i<2;i++){d.push(card('skip',c));d.push(card('reverse',c));d.push(card('draw2',c))}
+   });
+   for(i=0;i<4;i++){d.push(card('wild'));d.push(card('wild4'))}
+   if(S.mode==='mercy'){
+     for(i=0;i<2;i++){d.push(card('wild6'));d.push(card('wild10'));d.push(card('wildRev4'));d.push(card('wildColor'));d.push(card('discardAll'))}
+   }
+ }
+ return shuffle(d)
+}
+function top(){return S.discard[S.discard.length-1]}
+function activeColor(){return S.chosen||eff(top()).color}
+function colors(){return S.mode==='flip'&&S.dark?['pink','teal','orange','purple']:['red','yellow','green','blue']}
+function playable(c,hand){
+ var e=eff(c),t=eff(top()),target=activeColor(),i;
+ hand=hand||S.you;
+ if(S.pending>0)return RULES[S.mode].drawStack&&drawValue(e.type)>=S.pending;
+ if(isWild(e.type)){
+   if(S.mode==='classic'&&e.type==='wild4'){
+     for(i=0;i<hand.length;i++){var x=eff(hand[i]);if(x.color===target&&!isWild(x.type))return false}
+   }
+   return true
+ }
+ if(e.color&&e.color===target)return true;
+ if(e.type==='number'&&t.type==='number'&&e.value===t.value)return true;
+ if(['skip','reverse','draw1','draw2','draw5','skipAll','flip'].indexOf(e.type)>=0&&e.type===t.type)return true;
+ return false
+}
+function refill(){
+ if(S.deck.length||S.discard.length<2)return;
+ var keep=S.discard.pop();S.deck=shuffle(S.discard.splice(0));S.discard=[keep]
+}
+function drawOne(hand){refill();if(S.deck.length)hand.push(S.deck.pop())}
+function drawN(hand,n){for(var i=0;i<n;i++)drawOne(hand)}
+function deal(){var n=Number(el('cards').value);for(var i=0;i<n;i++){S.you.push(S.deck.pop());S.bot.push(S.deck.pop())}}
+function startTop(){
+ var i=0;
+ while(i<S.deck.length){
+   var e=eff(S.deck[i]);if(e.type==='number'||e.type==='skip'||e.type==='reverse'||e.type==='draw2'||e.type==='draw1')break;i++
+ }
+ S.discard.push(S.deck.splice(i,1)[0])
+}
+function next(){S.turn=1-S.turn}
+function cardLabel(c){var e=eff(c),m={number:String(e.value),skip:'SKIP',reverse:'REV',draw1:'+1',draw2:'+2',draw5:'+5',wild:'WILD',wild4:'+4',wild2:'WILD +2',wildColor:'WILD COLOR',wild6:'+6',wild10:'+10',wildRev4:'REV +4',discardAll:'ALL',skipAll:'SKIP ALL',flip:'FLIP'};return m[e.type]||e.type.toUpperCase()}
+function cardHtml(c,clickable,index){
+ var e=eff(c),cl='card '+(e.color||'wild')+(clickable&&!playable(c)?' disabled':'');
+ var d=clickable?' data-i="'+index+'"':'';
+ return '<div class="'+cl+'"'+d+'><div class="corner">'+(e.color?e.color[0].toUpperCase():'W')+'</div><div class="symbol">'+safe(cardLabel(c))+'</div><div class="tiny">'+(e.type==='number'?e.value:'')+'</div></div>'
+}
+function render(){
+ if(!S)return;
+ var m=RULES[S.mode], topC=top();
+ el('topMode').textContent=m.name;
+ el('youCount').textContent='Cards: '+S.you.length;
+ el('botCount').textContent='Cards: '+S.bot.length;
+ el('botMood').textContent=S.difficulty[0].toUpperCase()+S.difficulty.slice(1);
+ el('turn').textContent=S.turn===0?'YOUR TURN':'BOT TURN';
+ el('turnInfo').textContent='Top: '+cardLabel(topC)+(activeColor()?' · '+activeColor().toUpperCase():'')+(S.pending?' · PENALTY +'+S.pending:'');
+ el('deck').textContent=S.deck.length+' left';
+ el('botCards').innerHTML=Array(Math.min(18,S.bot.length)).fill('<div class="back"></div>').join('');
+ el('topCard').innerHTML=cardHtml(topC,false);
+ el('hand').innerHTML=S.you.map(function(c,i){return cardHtml(c,true,i)}).join('');
+ el('state').innerHTML='<div><b>Mode:</b> '+m.name+'</div><div><b>Direction:</b> '+(S.dir===1?'Clockwise':'Counter-clockwise')+'</div><div><b>Color:</b> '+String(activeColor()||'none').toUpperCase()+'</div><div><b>Side:</b> '+(S.mode==='flip'?(S.dark?'Dark':'Light'):'Single-side')+'</div><div><b>Penalty:</b> +'+S.pending+'</div><div><b>Top:</b> '+cardLabel(topC)+'</div>';
+ el('hint').textContent=S.turn===0?(S.pending?'Stack a matching draw card or take the penalty.':'Play a highlighted card or draw.'):'Bot is thinking…';
+ el('uno').disabled=!(S.you.length===1 && (S.turn===0 || Date.now()<S.unoGraceUntil));
+ el('hand').querySelectorAll('.card').forEach(function(n){n.addEventListener('click',function(){playHuman(Number(n.getAttribute('data-i')))});});
+}
+function winCheck(actor){
+ var hand=actor===0?S.you:S.bot;
+ if(hand.length===0){finish(actor===0?'YOU WIN':'BOT WINS',actor===0?'You emptied your hand.':'The bot emptied its hand.');return true}
+ if(S.mode==='mercy'&&hand.length>=25){finish(actor===0?'BOT WINS':'YOU WIN',actor===0?'You hit the 25-card Mercy Rule.':'The bot hit the 25-card Mercy Rule.');return true}
+ return false
+}
+function special(actor,e){
+ if(['draw1','draw2','draw5','wild2','wild4','wild6','wild10','wildRev4'].indexOf(e.type)>=0)S.pending+=drawValue(e.type);
+ if(e.type==='reverse')S.dir*=-1;
+ if(e.type==='flip'&&S.mode==='flip'){S.dark=!S.dark;S.you.concat(S.bot).concat(S.deck).concat(S.discard).forEach(function(c){c.side=c.side==='light'?'dark':'light'});S.chosen=null;log('THE DECK FLIPPED.')}
+ if(e.type==='discardAll'){var h=actor===0?S.you:S.bot,target=e.color||activeColor();for(var i=h.length-1;i>=0;i--)if(eff(h[i]).color===target)S.discard.push(h.splice(i,1)[0])}
+ if(S.mode==='mercy'&&e.type==='number'&&e.value===7){var t=S.you;S.you=S.bot;S.bot=t;log(actor===0?'You played 7 and swapped hands.':'Bot played 7 and swapped hands.')}
+ if(S.mode==='mercy'&&e.type==='number'&&e.value===0){var q=S.you;S.you=S.bot;S.bot=q;log(actor===0?'You played 0 and passed hands.':'Bot played 0 and passed hands.')}
+}
+function advance(eType){
+ if(eType==='reverse'){S.dir*=-1;next()} // 2-player reverse = skip; direction change once
+ else if(eType==='skip'||eType==='skipAll'){next();next()}
+ else next()
+}
+function afterPlay(actor,e){
+ if(winCheck(actor))return;
+ if(actor===0 && S.you.length===1){
+   S.youUno=false;
+   S.unoGraceUntil=Date.now()+2200;
+   log('UNO window open — hit CALL UNO now!');
+ }
+ advance(e.type);render();
+ if(S.turn===1) setTimeout(botTurn, actor===0 && S.you.length===1 ? 2200 : 450);
+}
+function playCard(actor,index,color){
+ var h=actor===0?S.you:S.bot,c=h[index];if(!c)return;
+ var e=eff(c);
+ h.splice(index,1);if(color)S.chosen=color;else S.chosen=null;S.discard.push(c);
+ log((actor===0?'You':'Bot')+' played '+cardLabel(c)+(color?' → '+color:'')+'.');
+ special(actor,e);
+ afterPlay(actor,e)
+}
+function chooseColor(index){
+ var arr=colors(),p=el('picker');arr.forEach(function(c,i){var b=p.querySelectorAll('button')[i];b.setAttribute('data-c',c);b.title='Choose '+c});p.style.display='grid';S.pendingColor=index
+}
+function playHuman(index){
+ if(!S||S.turn!==0||S.modal||S.pendingColor!==null)return;
+ var c=S.you[index];if(!c||!playable(c)){toast('That card is not playable.');return}
+ var e=eff(c);
+ if(isWild(e.type)){chooseColor(index);return}
+ playCard(0,index,null)
+}
+function bestBot(){
+ var out=[];
+ S.bot.forEach(function(c,i){if(playable(c,S.bot)){var e=eff(c),score=Math.random()*4;if(e.type==='number')score+=2;if(drawValue(e.type))score+=8;if(isWild(e.type))score+=7;if(S.bot.length<=3)score+=8;if(S.difficulty==='aggressive'&&drawValue(e.type))score+=6;if(S.difficulty==='chaotic')score+=Math.random()*18;if(e.color){var freq=S.bot.filter(function(x){return eff(x).color===e.color}).length;score+=freq}out.push({i:i,s:score})}});out.sort(function(a,b){return b.s-a.s});return out.length?out[0].i:-1
+}
+function botTurn(){
+ if(!S||S.modal||S.turn!==1)return;
+ if(S.you.length===1 && !S.youUno && Date.now()>=S.unoGraceUntil){S.unoGraceUntil=0;drawN(S.you,2);log('Bot caught you without UNO. Draw 2.');toast('Caught! +2 cards');if(winCheck(0))return}
+ if(S.pending>0){
+   var bi=bestBot();if(bi>=0&&drawValue(eff(S.bot[bi]).type)>=S.pending){var e=eff(S.bot[bi]);var cc=isWild(e.type)?pick(colors()):null;playCard(1,bi,cc);return}
+   var p=S.pending;drawN(S.bot,p);S.pending=0;log('Bot took +'+p+'.');next();render();return
+ }
+ if(RULES[S.mode].drawStack){
+   var i=bestBot();if(i<0){doDrawBot();return}var ee=eff(S.bot[i]),co=isWild(ee.type)?pick(colors()):null;playCard(1,i,co);return
+ }
+ var j=bestBot();
+ if(j>=0){var e2=eff(S.bot[j]),co2=isWild(e2.type)?pick(colors()):null;playCard(1,j,co2);return}
+ drawOne(S.bot);log('Bot drew a card.');var k=bestBot();if(k>=0){var ek=eff(S.bot[k]),ck=isWild(ek.type)?pick(colors()):null;playCard(1,k,ck);return}next();render()
+}
+function doDrawBot(){
+ var safety=0;do{drawOne(S.bot);safety++}while(S.bot.length&&safety<200&&!playable(S.bot[S.bot.length-1],S.bot));log('Bot drew until playable ('+safety+').');var i=bestBot();if(i>=0){var e=eff(S.bot[i]),c=isWild(e.type)?pick(colors()):null;playCard(1,i,c)}else{next();render()}
+}
+function finish(title,body){
+ S.modal=true;el('modalTitle').textContent=title;el('modalBody').textContent=body;el('modalButton').textContent='NEW MATCH';el('modal').classList.remove('hidden');render()
+}
+function toast(msg){var t=el('toast');t.textContent=msg;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(function(){t.style.display='none'},1400)}
+function newMatch(){S=null;el('modal').classList.add('hidden');el('game').classList.add('hidden');el('lobby').classList.remove('hidden');el('topMode').textContent='Choose a mode'}
+function start(){
+ var mode=document.querySelector('.mode.active').getAttribute('data-mode');
+ S={mode:mode,difficulty:el('difficulty').value,deck:[],discard:[],you:[],bot:[],turn:0,dir:1,dark:false,chosen:null,pending:0,pendingColor:null,youUno:false,unoGraceUntil:0,logs:[],modal:false};
+ S.deck=buildDeck();deal();startTop();el('lobby').classList.add('hidden');el('game').classList.remove('hidden');log('Match started.');render()
+}
+document.querySelectorAll('.mode').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.mode').forEach(function(x){x.classList.remove('active')});b.classList.add('active');el('rules').textContent=RULES[b.getAttribute('data-mode')].text})});
+el('rules').textContent=RULES.classic.text;
+el('start').addEventListener('click',start);
+el('new').addEventListener('click',newMatch);
+el('modalButton').addEventListener('click',newMatch);
+el('draw').addEventListener('click',function(){
+ if(!S||S.modal||S.turn!==0||S.pendingColor!==null)return;
+ if(S.pending>0){var n=S.pending;drawN(S.you,n);S.pending=0;log('You took +'+n+'.');if(winCheck(0))return;next();render();setTimeout(botTurn,450);return}
+ if(RULES[S.mode].drawStack){var count=0;do{drawOne(S.you);count++}while(S.you.length&&count<200&&!playable(S.you[S.you.length-1]));log('You drew until playable ('+count+').');render();return}
+ drawOne(S.you);log('You drew a card.');var c=S.you[S.you.length-1];if(c&&!playable(c)){next();render();setTimeout(botTurn,450)}else render()
+});
+el('uno').addEventListener('click',function(){
+ if(!S||S.you.length!==1)return;
+ if(S.turn!==0 && Date.now()>=S.unoGraceUntil){toast('Too late!');return}
+ S.youUno=true;S.unoGraceUntil=0;log('You called UNO.');toast('UNO!');render();
+});
+el('help').addEventListener('click',function(){
+ if(!S)return;S.modal=true;el('modalTitle').textContent=RULES[S.mode].name+' Rules';el('modalBody').textContent=RULES[S.mode].text;el('modalButton').textContent='CLOSE';el('modal').classList.remove('hidden')
+});
+el('modal').addEventListener('click',function(e){if(e.target===el('modal')){S.modal=false;el('modal').classList.add('hidden')}});
+document.querySelectorAll('#picker button').forEach(function(b){b.addEventListener('click',function(){
+ if(!S||S.pendingColor===null)return;var c=b.getAttribute('data-c'),i=S.pendingColor;S.pendingColor=null;el('picker').style.display='none';playCard(0,i,c)
+})});
+})();
+</script>
+</body>
+</html>
