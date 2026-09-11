@@ -214,9 +214,17 @@ function special(actor,e){
  if(S.mode==='mercy'&&e.type==='number'&&e.value===0){var q=S.you;S.you=S.bot;S.bot=q;log(actor===0?'You played 0 and passed hands.':'Bot played 0 and passed hands.')}
 }
 function advance(eType){
- if(eType==='reverse'){S.dir*=-1;next()} // 2-player reverse = skip; direction change once
- else if(eType==='skip'||eType==='skipAll'){next();next()}
- else next()
+ // In a 2-player game, Reverse acts exactly like Skip:
+ // reverse direction, but the other player does not get a turn.
+ if(eType==='reverse'){
+  S.dir*=-1;
+  return;
+ }
+ // Skip / Skip Everyone skips the opponent and keeps the turn.
+ if(eType==='skip'||eType==='skipAll'){
+  return;
+ }
+ next()
 }
 function afterPlay(actor,e){
  if(winCheck(actor))return;
